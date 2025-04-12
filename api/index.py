@@ -1,4 +1,4 @@
-from flask import Flask, render_template, abort
+from flask import Flask, render_template, request, abort
 import requests
 import ipaddress
 import os
@@ -19,22 +19,24 @@ def fetch_ip_info(ip_address=''):
         response.raise_for_status()
         return response.json()
     except requests.RequestException as e:
-        return {"error": f"Gagal mengambil data IP: {e}"}
+        return {"error": f"Failed to fetch IP data: {e}"}
     except Exception as e:
-        return {"error": f"Terjadi kesalahan: {e}"}
+        return {"error": f"An error occurred: {e}"}
 
 @app.route('/')
 def my_ip_info():
-    data = fetch_ip_info()
+    # Get the IP of the user accessing the application
+    user_ip = request.remote_addr
+    data = fetch_ip_info(user_ip)
     return render_template("ipinfo.html", data=data)
 
 @app.route('/<ip>')
 def show_ip_info(ip):
     if not is_valid_ip(ip):
-        return render_template("ipinfo.html", data={"error": "IP address tidak valid!"})
+        return render_template("ipinfo.html", data={"error": "Invalid IP address!"})
     
     data = fetch_ip_info(ip)
     return render_template("ipinfo.html", data=data)
 
-# Vercel pakai `app` dari sini
+# Vercel requires the app to be exposed like this
 app = app
