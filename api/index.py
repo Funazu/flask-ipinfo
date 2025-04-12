@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, make_response
 import requests
 import ipaddress
 import socket
@@ -60,11 +60,16 @@ def show_ip_info_or_domain(target):
 @app.route("/ip")
 def ip_lookup():
     query = request.args.get("query")
+
     if query:
-        return redirect(f"/{query}")
-    # kalau tidak ada query, pakai IP client
-    user_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-    return redirect(f"/{user_ip}")
+        response = make_response('', 302)
+        response.headers['Location'] = f"/{query}"
+        return response
+    else:
+        user_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+        response = make_response('', 302)
+        response.headers['Location'] = f"/{user_ip}"
+        return response
 
 # Needed for Vercel
 app = app
