@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Informasi IP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px 12px;
+        }
+        td a {
+            color: blue;
+            text-decoration: none;
+        }
+        td a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h2>Informasi IP</h2>
+    {% if data.error %}
+        <p style="color:red;">{{ data.error }}</p>
+    {% else %}
+    <table>
+        <tr><th>Field</th><th>Value</th></tr>
+        <tr>
+            <td>IP Address</td>
+            <td>
+                {% if data.ip %}
+                    {% set ip_parts = data.ip.split('.') %}
+                    {% if ip_parts|length == 4 %}
+                        {% set network_ip = ip_parts[0] ~ '.' ~ ip_parts[1] ~ '.' ~ ip_parts[2] ~ '.0' %}
+                        <a href="https://ipinfo.io/ips/{{ network_ip }}/24" target="_blank">{{ data.ip }}</a>
+                    {% else %}
+                        {{ data.ip }}
+                    {% endif %}
+                {% else %}
+                    Tidak tersedia
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Kota</td>
+            <td>{{ data.city or '-' }}</td>
+        </tr>
+        <tr>
+            <td>Region</td>
+            <td>{{ data.region or '-' }}</td>
+        </tr>
+        <tr>
+            <td>Negara</td>
+            <td>{{ data.country or '-' }}</td>
+        </tr>
+        <tr>
+            <td>Lokasi (Lat,Long)</td>
+            <td>
+                {% if data.loc %}
+                    <a href="https://maps.google.com/?q={{ data.loc }}" target="_blank">{{ data.loc }}</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>ISP (ASN)</td>
+            <td>
+                {% if data.org %}
+                    {% set asn = data.org.split(' ')[0] %}
+                    <a href="https://ipinfo.io/{{ asn }}" target="_blank">{{ data.org }}</a>
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td>Timezone</td>
+            <td>{{ data.timezone or '-' }}</td>
+        </tr>
+    </table>
+    {% endif %}
+</body>
+</html>
