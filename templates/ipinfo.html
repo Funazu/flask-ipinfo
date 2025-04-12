@@ -1,96 +1,91 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Informasi IP</title>
+    <title>IP Info Lookup</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 30px auto;
-        }
-        h2 {
-            text-align: center;
+            margin: 30px;
         }
         table {
             border-collapse: collapse;
             width: 100%;
-            margin-top: 20px;
+            max-width: 600px;
         }
-        td, th {
-            border: 1px solid #ddd;
-            padding: 8px 12px;
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
         }
-        td a {
-            color: blue;
+        th {
+            background-color: #f4f4f4;
+            text-align: left;
+            width: 30%;
+        }
+        a {
+            color: #0077cc;
             text-decoration: none;
         }
-        td a:hover {
+        a:hover {
             text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <h2>Informasi IP</h2>
+    <h1>IP Information</h1>
+
     {% if data.error %}
-        <p style="color:red;">{{ data.error }}</p>
+        <p style="color: red;">{{ data.error }}</p>
     {% else %}
-    <table>
-        <tr><th>Field</th><th>Value</th></tr>
-        <tr>
-            <td>IP Address</td>
-            <td>
-                {% if data.ip %}
-                    {% set ip_parts = data.ip.split('.') %}
-                    {% if ip_parts|length == 4 %}
-                        {% set network_ip = ip_parts[0] ~ '.' ~ ip_parts[1] ~ '.' ~ ip_parts[2] ~ '.0' %}
-                        <a href="https://ipinfo.io/ips/{{ network_ip }}/24" target="_blank">{{ data.ip }}</a>
-                    {% else %}
-                        {{ data.ip }}
-                    {% endif %}
-                {% else %}
-                    Tidak tersedia
+        <table>
+            {% if data.domain %}
+            <tr>
+                <th>Domain</th>
+                <td>{{ data.domain }}</td>
+            </tr>
+            {% endif %}
+            <tr>
+                <th>IP Address</th>
+                <td><a href="https://ipinfo.io/{{ data.ip }}" target="_blank">{{ data.ip }}</a></td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ data.city }}</td>
+            </tr>
+            <tr>
+                <th>Region</th>
+                <td>{{ data.region }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ data.country }}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td><a href="https://www.google.com/maps?q={{ data.loc }}" target="_blank">{{ data.loc }}</a></td>
+            </tr>
+            <tr>
+                <th>ISP</th>
+                <td><a href="https://ipinfo.io/{{ data.org }}" target="_blank">{{ data.org }}</a></td>
+            </tr>
+            <tr>
+                <th>Timezone</th>
+                <td>{{ data.timezone }}</td>
+            </tr>
+            {% if data.ip %}
+                {% set ip_parts = data.ip.split('.') %}
+                {% if ip_parts|length == 4 %}
+                <tr>
+                    <th>Network Info</th>
+                    <td>
+                        <a href="https://ipinfo.io/ips/{{ ip_parts[0] }}.{{ ip_parts[1] }}.{{ ip_parts[2] }}.0/24" target="_blank">
+                            View /24 Network
+                        </a>
+                    </td>
+                </tr>
                 {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td>Kota</td>
-            <td>{{ data.city or '-' }}</td>
-        </tr>
-        <tr>
-            <td>Region</td>
-            <td>{{ data.region or '-' }}</td>
-        </tr>
-        <tr>
-            <td>Negara</td>
-            <td>{{ data.country or '-' }}</td>
-        </tr>
-        <tr>
-            <td>Lokasi (Lat,Long)</td>
-            <td>
-                {% if data.loc %}
-                    <a href="https://maps.google.com/?q={{ data.loc }}" target="_blank">{{ data.loc }}</a>
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td>ISP (ASN)</td>
-            <td>
-                {% if data.org %}
-                    {% set asn = data.org.split(' ')[0] %}
-                    <a href="https://ipinfo.io/{{ asn }}" target="_blank">{{ data.org }}</a>
-                {% else %}
-                    -
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <td>Timezone</td>
-            <td>{{ data.timezone or '-' }}</td>
-        </tr>
-    </table>
+            {% endif %}
+        </table>
     {% endif %}
 </body>
 </html>
