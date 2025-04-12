@@ -7,35 +7,85 @@
         body {
             font-family: Arial, sans-serif;
             margin: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            width: 250px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 8px 14px;
+            font-size: 14px;
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #005fa3;
+        }
+
         table {
             border-collapse: collapse;
             width: 100%;
             max-width: 600px;
+            text-align: left;
         }
+
         th, td {
             border: 1px solid #ccc;
             padding: 10px;
         }
+
         th {
             background-color: #f4f4f4;
-            text-align: left;
             width: 30%;
         }
+
         a {
             color: #0077cc;
             text-decoration: none;
         }
+
         a:hover {
             text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <h1>IP Information</h1>
 
+    <form method="get" action="/ip">
+        <input type="text" name="query" placeholder="Enter IP or domain" required>
+        <button type="submit">Search</button>
+    </form>
+
     {% if data.error %}
-        <p style="color: red;">{{ data.error }}</p>
+        <p class="error">{{ data.error }}</p>
     {% else %}
         <table>
             {% if data.domain %}
@@ -65,8 +115,15 @@
                 <td><a href="https://www.google.com/maps?q={{ data.loc }}" target="_blank">{{ data.loc }}</a></td>
             </tr>
             <tr>
-                <th>ISP</th>
-                <td><a href="https://ipinfo.io/{{ data.org }}" target="_blank">{{ data.org }}</a></td>
+                <td>ISP (ASN)</td>
+                <td>
+                    {% if data.org %}
+                        {% set asn = data.org.split(' ')[0] %}
+                        <a href="https://ipinfo.io/{{ asn }}" target="_blank">{{ data.org }}</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
             </tr>
             <tr>
                 <th>Timezone</th>
