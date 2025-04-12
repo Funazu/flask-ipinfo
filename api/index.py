@@ -36,15 +36,6 @@ def my_ip_info():
     data = fetch_ip_info(user_ip)
     return render_template("ipinfo.html", data=data)
 
-@app.route("/ip")
-def ip_lookup():
-    query = request.args.get("query")
-    if query:
-        return redirect(f"/{query}")
-    # kalau tidak ada query, pakai IP client
-    user_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
-    return redirect(f"/{user_ip}")
-
 @app.route('/<target>')
 def show_ip_info_or_domain(target):
     ip = None
@@ -64,6 +55,16 @@ def show_ip_info_or_domain(target):
     if domain_resolved:
         data["domain"] = domain_resolved
     return render_template("ipinfo.html", data=data)
+
+
+@app.route("/ip")
+def ip_lookup():
+    query = request.args.get("query")
+    if query:
+        return redirect(f"/{query}")
+    # kalau tidak ada query, pakai IP client
+    user_ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+    return redirect(f"/{user_ip}")
 
 # Needed for Vercel
 app = app
